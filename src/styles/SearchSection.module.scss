@@ -1,0 +1,65 @@
+.mainContainer {
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 5px;
+  color: #4caf50;
+  text-align: center;
+}
+.description {
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: #424242;
+  text-align: center;
+}
+.searchWrapper {
+  margin-bottom: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.searchInput {
+  padding: 10px;
+  border: 1px solid #424242;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 450px;
+  color: #424242;
+}
+.buttonsWrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.homeButtons {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 15px;
+}
+
+.homeButtons:hover {
+  background-color: #388e3c;
+}
+
+@media (max-width: 768px) {
+  .searchInput {
+    width: 90%;
+  }
+  .buttonsWrapper {
+    flex-direction: column;
+    margin-top: 20px;
+  }
+}
