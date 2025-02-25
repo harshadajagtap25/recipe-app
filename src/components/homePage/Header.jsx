@@ -1,10 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaBars, FaUtensils } from "react-icons/fa";
 import classes from "../../styles/home.module.scss";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+  const handleFridgeInventoryClick = () => {
+    navigate("/fridge");
+  };
+
+  const handleRecipeIdeaClick = () => {
+    navigate("/recipes");
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -24,9 +37,9 @@ const Header = () => {
       </div>
 
       <div className={classes.appRoutes}>
-        <div>Home</div>
-        <div>Fridge Invetory</div>
-        <div>Recipe Ideas</div>
+        <div onClick={handleHomeClick}>Home</div>
+        <div onClick={handleFridgeInventoryClick}>Fridge Inventory</div>
+        <div onClick={handleRecipeIdeaClick}>Recipe Ideas</div>
       </div>
 
       {/* Mobile Navigation */}
@@ -42,9 +55,9 @@ const Header = () => {
         <div
           className={`${classes.mobileDropdown} ${isOpen ? classes.show : ""}`}
         >
-          <div>Home</div>
-          <div>Fridge Inventory</div>
-          <div>Recipe Ideas</div>
+          <div onClick={handleHomeClick}>Home</div>
+          <div onClick={handleFridgeInventoryClick}>Fridge Inventory</div>
+          <div onClick={handleRecipeIdeaClick}>Recipe Ideas</div>
         </div>
       </div>
     </div>

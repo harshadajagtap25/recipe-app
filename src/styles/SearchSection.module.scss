@@ -24,9 +24,14 @@
   margin-bottom: 15px;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 }
+.errorMessageDiv {
+}
+
 .searchInput {
   padding: 10px;
   border: 1px solid #424242;

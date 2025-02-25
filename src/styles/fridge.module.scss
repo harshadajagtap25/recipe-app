@@ -1,0 +1,177 @@
+.mainContainer {
+  display: flex;
+  min-height: 100vh;
+  min-width: 100vw;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  margin-top: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 50px;
+}
+
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: #424242;
+  font-size: 14px;
+}
+
+.cardsContainerWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 20px;
+  box-sizing: border-box;
+}
+.noIngredientText {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 40px;
+}
+
+.ingredientCard {
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: calc(33.33% - 20px);
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  box-sizing: border-box;
+}
+.card1 {
+  //   width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.ingredientTitle {
+  color: #4caf50;
+  text-transform: capitalize;
+}
+.ingredientDetails {
+  color: #424242;
+  font-size: 14px;
+}
+.card2 {
+  //   width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 15px;
+  box-sizing: border-box;
+  font-size: 20px;
+  color: #4caf50;
+  cursor: pointer;
+}
+.plusIcon {
+  color: #4caf50;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+// Add ingredient modal
+.addIngredientModalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formInput {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 14px;
+  width: 100%;
+}
+.addIngredientLabel {
+  font-size: 13px;
+}
+.addFormSuccess {
+  font-size: 10px;
+  color: green;
+}
+.addFormError {
+  font-size: 10px;
+  color: red;
+  text-transform: capitalize;
+  margin-top: 3px;
+  padding: 0px;
+}
+.formInput input {
+  width: 100%;
+  padding: 2px;
+  outline: none;
+  font-size: 12px;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+
+.addIngredientButton {
+  width: 100px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none !important;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  text-align: center;
+}
+.addIngredientButton:hover {
+  background-color: #388e3c;
+}
+.addButtonDisabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.cancelButton {
+  width: 100px;
+  padding: 10px 20px;
+  background-color: gray;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  text-align: center;
+}
+.cancelButton:hover {
+  background-color: rgb(95, 94, 94);
+}
+@media (max-width: 768px) {
+  .wrapper {
+    gap: 30px;
+  }
+
+  .ingredientCard {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
