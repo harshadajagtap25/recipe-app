@@ -14,9 +14,21 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  gap: 50px;
 }
 
+.pageTitle {
+  text-align: start;
+  width: 100%;
+  color: #4caf50;
+}
+
+.instructions {
+  width: 100%;
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: 424242;
+  text-align: start !important;
+}
 .headerWrapper {
   display: flex;
   justify-content: space-between;
@@ -24,6 +36,7 @@
   width: 100%;
   color: #424242;
   font-size: 14px;
+  margin-top: 30px;
 }
 
 .cardsContainerWrapper {
@@ -31,8 +44,9 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   width: 100%;
-  gap: 20px;
+  gap: 26.5px;
   box-sizing: border-box;
+  margin-top: 20px;
 }
 .noIngredientText {
   display: flex;
@@ -46,8 +60,8 @@
 }
 
 .ingredientCard {
-  flex: 1 1 calc(33.33% - 20px);
-  max-width: calc(33.33% - 20px);
+  flex: 1 1 calc(25% - 20px);
+  max-width: calc(25% - 20px);
   padding: 10px;
   box-sizing: border-box;
   display: flex;
@@ -69,7 +83,6 @@
 }
 
 .ingredientTitle {
-  color: #4caf50;
   text-transform: capitalize;
 }
 .ingredientDetails {
@@ -85,11 +98,9 @@
   gap: 15px;
   box-sizing: border-box;
   font-size: 20px;
-  color: #4caf50;
   cursor: pointer;
 }
 .plusIcon {
-  color: #4caf50;
   cursor: pointer;
   font-size: 24px;
 }
@@ -109,8 +120,10 @@
   font-size: 14px;
   width: 100%;
 }
+
 .addIngredientLabel {
   font-size: 13px;
+  margin-bottom: 2px;
 }
 .addFormSuccess {
   font-size: 10px;
@@ -125,17 +138,30 @@
 }
 .formInput input {
   width: 100%;
-  padding: 2px;
+  padding: 8px;
   outline: none;
-  font-size: 12px;
-  border-radius: 5px;
-  border: 1px solid grey;
+  border-radius: 4px;
+  border: 1px solid hsl(0, 0%, 80%);
+  background-color: white;
+}
+
+.datePickerWrapper {
+  display: block;
+  width: 100%;
+}
+
+.datePicker {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 .addIngredientButton {
   width: 100px;
   padding: 10px 20px;
-  background-color: #4caf50;
+  background-color: #ff6600;
   color: white;
   border: none !important;
   cursor: pointer;
@@ -145,7 +171,7 @@
   text-align: center;
 }
 .addIngredientButton:hover {
-  background-color: #388e3c;
+  background-color: #e55a00;
 }
 .addButtonDisabled {
   opacity: 0.7;
@@ -167,11 +193,14 @@
 }
 @media (max-width: 768px) {
   .wrapper {
-    gap: 30px;
+    gap: 20px;
   }
 
   .ingredientCard {
     flex: 1 1 100%;
     max-width: 100%;
+  }
+  .headerWrapper {
+    margin-top: 0px;
   }
 }

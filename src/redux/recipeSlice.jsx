@@ -1,22 +1,43 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
-export const fetchSearchedRecipe = createAsyncThunk(
-  "recipes/fetchSearchedRecipe",
-  async (searchQuery) => {
-    const response = await fetch(
-      `http://localhost:8080/api/search?query=${searchQuery}`
-    ); // Replace with actual API
-    const data = await response.json();
-    console.log("searched response : ", data);
-    return data;
+export const fetchTopRecipes = createAsyncThunk(
+  "fridge/fetchTopRecipes",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/recipe/suggestion/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch top 3 recipe"
+      );
+    }
+  }
+);
+
+export const fetchAllRecipes = createAsyncThunk(
+  "fridge/fetchAllRecipes",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/recipe/all`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch all recipe"
+      );
+    }
   }
 );
 
 const initialState = {
-  recipes: [],
-  searchQuery: "",
-  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
-  error: null,
+  top3RecipeSuggestions: [],
+  top3Status: "idle",
+  top3Error: null,
+  allRecipes: [],
+  allRecipesStatus: "idle",
+  allRecipesError: null,
 };
 
 const recipeSlice = createSlice({
@@ -24,26 +45,43 @@ const recipeSlice = createSlice({
   initialState,
 
   reducers: {
-    setSearchQuery: (state, action) => {
-      state.searchQuery = action.payload;
+    resetTop3States: (state) => {
+      state.top3Error = null;
+      state.top3Status = "idle";
     },
   },
+
   extraReducers: (builder) => {
+    // Top 3 recipes
     builder
-      .addCase(fetchSearchedRecipe.pending, (state) => {
-        state.status = "loading";
+      .addCase(fetchTopRecipes.pending, (state) => {
+        state.top3Status = "loading";
       })
-      .addCase(fetchSearchedRecipe.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.recipes = action.payload;
+      .addCase(fetchTopRecipes.fulfilled, (state, action) => {
+        state.top3Status = "succeeded";
+        state.top3RecipeSuggestions = action.payload;
       })
-      .addCase(fetchSearchedRecipe.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+      .addCase(fetchTopRecipes.rejected, (state, action) => {
+        state.top3Status = "failed";
+        state.top3Error = action.payload;
+      });
+
+    // All recipes
+    builder
+      .addCase(fetchAllRecipes.pending, (state) => {
+        state.allRecipesStatus = "loading";
+      })
+      .addCase(fetchAllRecipes.fulfilled, (state, action) => {
+        state.allRecipesStatus = "succeeded";
+        state.allRecipes = action.payload;
+      })
+      .addCase(fetchAllRecipes.rejected, (state, action) => {
+        state.allRecipesStatus = "failed";
+        state.allRecipesError = action.payload;
       });
   },
 });
 
-export const { setSearchQuery } = recipeSlice.actions;
+export const { resetTop3States } = recipeSlice.actions;
 
 export default recipeSlice.reducer;

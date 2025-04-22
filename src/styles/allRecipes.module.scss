@@ -1,0 +1,27 @@
+.mainContainer {
+  display: flex;
+  min-height: 100vh;
+  min-width: 100vw;
+  flex-direction: column;
+}
+
+.pageTitle {
+  text-align: start;
+  width: 100%;
+  color: #4caf50;
+}
+.description {
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: 424242;
+  text-align: start;
+}
+
+.recipeListWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 20px;
+  box-sizing: border-box;
+}

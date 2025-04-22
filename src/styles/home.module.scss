@@ -22,6 +22,7 @@
   color: #ffffff;
   font-weight: 600;
   font-size: 16px;
+  cursor: pointer;
 }
 
 .appRoutes {
@@ -70,6 +71,7 @@
     transform: translateY(-10px);
     opacity: 0;
     transition: all 0.3s ease-in-out;
+    color: #2e7d32;
   }
 
   .mobileDropdown.show {

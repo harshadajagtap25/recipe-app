@@ -9,7 +9,6 @@
 }
 
 .title {
-  font-size: 24px;
   margin-bottom: 5px;
   color: #4caf50;
   text-align: center;
@@ -48,7 +47,7 @@
 }
 
 .homeButtons {
-  background-color: #4caf50;
+  background-color: #225c25;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -57,6 +56,11 @@
 
 .homeButtons:hover {
   background-color: #388e3c;
+}
+
+.illustrationWrapper {
+  width: 50%;
+  margin: 20px 0px;
 }
 
 @media (max-width: 768px) {

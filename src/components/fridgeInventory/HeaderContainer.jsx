@@ -9,28 +9,26 @@ const HeaderContainer = () => {
 
   const [modalData, setModalData] = useState({
     isOpen: false,
-    onConfirm: () => {},
   });
 
   const handleAddIngredientModal = () => {
     setModalData({
       isOpen: true,
-      onConfirm: () => {
-        console.log("addded ");
-      },
     });
   };
   return (
     <div className={classes.headerWrapper}>
-      <div>Total items : {ingredients.length} </div>
+      {ingredients["items"] && (
+        <div>Total items : {ingredients["items"].length} </div>
+      )}
       <div>
         <AiFillPlusCircle
+          color="#2e7d32"
           className={classes.plusIcon}
           onClick={handleAddIngredientModal}
         />
         <AddIngredientModal
           isOpen={modalData.isOpen}
-          onConfirm={modalData.onConfirm}
           onClose={() => setModalData({ ...modalData, isOpen: false })}
         />
       </div>

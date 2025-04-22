@@ -1,12 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchIngredients = createAsyncThunk(
-  "fridge/fetchIngredients",
+export const fetchIngredientsToSelect = createAsyncThunk(
+  "fridge/fetchIngredientsToSelect",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/fridge/12345/inventory`
+        `http://localhost:8080/ingredient/getList`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch ingredients to select"
+      );
+    }
+  }
+);
+
+export const fetchIngredientsForDisplay = createAsyncThunk(
+  "fridge/fetchIngredientsForDisplay",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/fridge/${userId}/inventory`
       );
       return response.data;
     } catch (error) {
@@ -22,8 +38,8 @@ export const addIngredient = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/fridge/12345/add`,
-        payload,
+        `http://localhost:8080/fridge/${payload.userId}/add`,
+        payload.ingredientToAdd,
         { headers: { "Content-Type": "application/json" } }
       );
       return response.data;
@@ -40,8 +56,8 @@ export const deleteIngredient = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/fridge/12345/remove`,
-        payload,
+        `http://localhost:8080/fridge/${payload.userId}/remove`,
+        payload.payload,
         { headers: { "Content-Type": "application/json" } }
       );
       return response.data;
@@ -54,9 +70,14 @@ export const deleteIngredient = createAsyncThunk(
 );
 
 const initialState = {
+  ingredientNames: [],
+  fetchIngredientNamesStatus: "idle",
+  fetchIngredientNamesError: null,
+
   ingredients: [],
   fetchStatus: "idle",
   fetchError: null,
+
   addStatus: "idle",
   addError: null,
   deleteStatus: "idle",
@@ -80,14 +101,14 @@ const fridgeSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Handle fetchIngredients
-      .addCase(fetchIngredients.pending, (state) => {
+      .addCase(fetchIngredientsForDisplay.pending, (state) => {
         state.fetchStatus = "loading";
       })
-      .addCase(fetchIngredients.fulfilled, (state, action) => {
+      .addCase(fetchIngredientsForDisplay.fulfilled, (state, action) => {
         state.fetchStatus = "succeeded";
         state.ingredients = action.payload;
       })
-      .addCase(fetchIngredients.rejected, (state, action) => {
+      .addCase(fetchIngredientsForDisplay.rejected, (state, action) => {
         state.fetchStatus = "failed";
         state.fetchError = action.payload;
       })
@@ -98,7 +119,7 @@ const fridgeSlice = createSlice({
       })
       .addCase(addIngredient.fulfilled, (state, action) => {
         state.addStatus = "succeeded";
-        state.ingredients.push(action.payload);
+        state.ingredients["items"].push(action.payload["results"][0]);
       })
       .addCase(addIngredient.rejected, (state, action) => {
         state.addStatus = "failed";
@@ -115,6 +136,19 @@ const fridgeSlice = createSlice({
       .addCase(deleteIngredient.rejected, (state, action) => {
         state.deleteStatus = "failed";
         state.addError = action.payload;
+      })
+
+      // Handle fetchIngredientsToSelect
+      .addCase(fetchIngredientsToSelect.pending, (state) => {
+        state.fetchIngredientNamesStatus = "loading";
+      })
+      .addCase(fetchIngredientsToSelect.fulfilled, (state, action) => {
+        state.fetchIngredientNamesStatus = "succeeded";
+        state.ingredientNames = action.payload;
+      })
+      .addCase(fetchIngredientsToSelect.rejected, (state, action) => {
+        state.fetchIngredientNamesStatus = "failed";
+        state.fetchIngredientNamesError = action.payload;
       });
   },
 });

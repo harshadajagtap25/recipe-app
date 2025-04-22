@@ -1,92 +1,203 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Modal } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import Select from "react-select";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useAuth } from "@/contexts/AuthContext";
 import classes from "../../styles/fridge.module.scss";
 import {
   addIngredient,
-  fetchIngredients,
+  fetchIngredientsForDisplay,
+  fetchIngredientsToSelect,
   resetAddError,
 } from "@/redux/fridgeSlice";
-import { useDispatch, useSelector } from "react-redux";
 
-const AddIngredientModal = ({ isOpen, onClose, onConfirm }) => {
+const UNIT_OPTIONS = [
+  // { value: "ml", label: "ml" },
+  // { value: "l", label: "l" },
+  // { value: "g", label: "g" },
+  // { value: "kg", label: "kg" },
+  // { value: "unit", label: "unit" },
+  // { value: "count", label: "count" },
+  { value: "none", label: "none" },
+];
+
+const INITIAL_FORM_STATE = {
+  ingredientName: "",
+  quantity: "",
+  unit: [],
+  expiryDate: null,
+};
+
+const AddIngredientModal = ({ isOpen, onClose }) => {
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    ingredientName: "",
-    quantity: "",
-    unit: "",
-  });
-  const { addStatus, addError } = useSelector((state) => state.fridge);
-  const prevStatus = useRef(addStatus);
-  const dispatch = useDispatch();
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const [unitOptions, setUnitOptions] = useState(UNIT_OPTIONS);
 
+  const { addStatus, addError, ingredientNames } = useSelector(
+    (state) => state.fridge
+  );
+  const dispatch = useDispatch();
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(fetchIngredientsToSelect());
+    }
+  }, [isOpen, dispatch]);
+
+  // Reset form when closing or after successful add
+  const resetForm = useCallback(() => {
+    setFormData(INITIAL_FORM_STATE);
+    setErrors({});
+    dispatch(resetAddError());
+  }, [dispatch]);
+
+  // Handle close with reset
+  const handleClose = useCallback(() => {
+    resetForm();
+    onClose();
+  }, [resetForm, onClose]);
+
+  // Handle successful submission with small delay to let backend process
+  useEffect(() => {
+    if (addStatus === "succeeded") {
+      const timer = setTimeout(() => {
+        dispatch(fetchIngredientsForDisplay(currentUser.id));
+        handleClose();
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [addStatus, dispatch, currentUser.id, handleClose]);
+
+  // Validate a single field
   const validateField = (name, value) => {
     let error = "";
 
-    if (!value.trim()) {
-      error = `${name.replace(/([A-Z])/g, " $1")} is required.`;
-    } else {
-      switch (name) {
-        case "ingredientName":
-          if (!/^[A-Za-z\s]+$/.test(value))
-            error = "Ingredient Name must contain only letters.";
-          break;
-        case "quantity":
-          if (!/^\d+$/.test(value)) error = "Quantity must be a valid number.";
-          break;
-        default:
-          break;
+    if (name === "expiryDate") {
+      if (value === null) return "";
+
+      // Check if date is in the past
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (value < today) {
+        error = "Expiry date cannot be in the past.";
       }
+      return error;
     }
 
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+    if (!value?.toString().trim()) {
+      error = `${
+        name.charAt(0).toUpperCase() + name.slice(1).replace(/([A-Z])/g, " $1")
+      } is required.`;
+    } else if (name === "ingredientName" && !/^[A-Za-z\s()]+$/.test(value)) {
+      error = "Ingredient Name must contain only letters.";
+    } else if (name === "quantity" && !/^\d+$/.test(value)) {
+      error = "Quantity must be a valid number.";
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: error }));
+    return error;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  // Handle form field changes
+  const handleChange = useCallback((name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // If the name is ingredientName, update the unit options and set default unit
+    if (name === "ingredientName" && value) {
+      // Find the selected ingredient from your ingredients data
+      const selectedIngredient = ingredientNames.find(
+        (ingredient) => ingredient.name === value
+      );
+
+      if (selectedIngredient) {
+        // Create unit options from the ingredient's commonUnits
+        const ingredientUnitOptions = selectedIngredient.commonUnits.map(
+          (unit) => ({
+            value: unit,
+            label: unit,
+          })
+        );
+
+        // Set the unit options
+        setUnitOptions(ingredientUnitOptions);
+
+        // Set the default unit from the ingredient
+        setFormData((prevData) => ({
+          ...prevData,
+          unit: selectedIngredient.defaultUnit,
+        }));
+      }
+    }
     validateField(name, value);
-  };
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = {};
+  // Form submission handler
+  const handleSubmit = useCallback(
+    async (e) => {
+      e?.preventDefault();
 
-    Object.keys(formData).forEach((key) => {
-      validateField(key, formData[key]);
-      if (!formData[key].trim()) {
-        newErrors[key] = `${key.replace(/([A-Z])/g, " $1")} is required.`;
+      // Validate all fields
+      const newErrors = {};
+      let hasErrors = false;
+
+      // Validate required fields
+      const requiredFields = ["ingredientName", "quantity", "unit"];
+      requiredFields.forEach((key) => {
+        const error = validateField(key, formData[key]);
+        if (error) {
+          newErrors[key] = error;
+          hasErrors = true;
+        }
+      });
+
+      // Validate expiry date separately (optional field)
+      const expiryDateError = validateField("expiryDate", formData.expiryDate);
+      if (expiryDateError) {
+        newErrors.expiryDate = expiryDateError;
+        hasErrors = true;
       }
-    });
 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      console.log("form data: ", formData);
+      if (hasErrors) {
+        setErrors(newErrors);
+        return;
+      }
+
       const payload = {
-        name: formData.ingredientName,
-        quantity: formData.quantity,
-        unit: formData.unit,
+        ingredientToAdd: {
+          items: [
+            {
+              name: formData.ingredientName,
+              quantity: formData.quantity,
+              unit: formData.unit,
+              expiryDate: formData.expiryDate
+                ? formData.expiryDate.toISOString()
+                : null,
+            },
+          ],
+        },
+        userId: currentUser.id,
       };
+
       dispatch(addIngredient(payload));
-    }
-  };
+    },
+    [formData, currentUser.id, dispatch]
+  );
 
-  const handleClose = () => {
-    setFormData({ ingredientName: "", quantity: "", unit: "" });
-    dispatch(resetAddError());
-    setErrors({});
-    onClose();
-  };
+  // Check if form is valid for submission
+  const isFormValid =
+    formData.ingredientName.trim() &&
+    formData.quantity.trim() &&
+    formData.unit.trim() &&
+    (!formData.expiryDate || !errors.expiryDate) &&
+    Object.values(errors).every((error) => !error);
 
-  useEffect(() => {
-    if (prevStatus.current === "loading" && addStatus === "succeeded") {
-      setFormData({ ingredientName: "", quantity: "", unit: "" });
-      setErrors({});
-      onClose();
-      dispatch(fetchIngredients());
-      dispatch(resetAddError());
-    }
-    prevStatus.current = addStatus;
-  }, [addStatus, dispatch, onClose]);
+  const ingredientOptions = ingredientNames.map((ingredient) => ({
+    value: ingredient.name,
+    label: ingredient.name,
+  }));
 
   return (
     <Modal show={isOpen} onHide={handleClose} centered>
@@ -106,12 +217,24 @@ const AddIngredientModal = ({ isOpen, onClose, onConfirm }) => {
             >
               Ingredient Name
             </label>
-            <input
-              type="text"
-              name="ingredientName"
-              value={formData.ingredientName}
-              onChange={handleChange}
-              required
+            <Select
+              options={ingredientOptions}
+              value={
+                formData.ingredientName
+                  ? {
+                      value: formData.ingredientName,
+                      label: formData.ingredientName,
+                    }
+                  : null
+              }
+              onChange={(option) =>
+                handleChange("ingredientName", option.value)
+              }
+              placeholder="Select an ingredient"
+              isSearchable={true}
+              styles={{
+                container: (provided) => ({ ...provided, width: "100%" }),
+              }}
             />
             {errors.ingredientName && (
               <div className={classes.addFormError}>
@@ -128,8 +251,10 @@ const AddIngredientModal = ({ isOpen, onClose, onConfirm }) => {
               type="text"
               name="quantity"
               value={formData.quantity}
-              onChange={handleChange}
+              onChange={(e) => handleChange("quantity", e.target.value)}
               required
+              className={classes.quantityInput}
+              placeholder="Enter a quantity"
             />
             {errors.quantity && (
               <div className={classes.addFormError}>{errors.quantity}</div>
@@ -140,23 +265,46 @@ const AddIngredientModal = ({ isOpen, onClose, onConfirm }) => {
             <label htmlFor="unit" className={classes.addIngredientLabel}>
               Unit
             </label>
-            <select
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>
-                Select a unit
-              </option>
-              <option value="kg">Kilograms (kg)</option>
-              <option value="grams">Grams (g)</option>
-              <option value="cubes">Cubes</option>
-              <option value="liters">Liters (L)</option>
-              <option value="unit">Unit</option>
-            </select>
+            <Select
+              options={unitOptions}
+              value={
+                formData.unit
+                  ? {
+                      value: formData.unit,
+                      label: formData.unit,
+                    }
+                  : null
+              }
+              onChange={(option) => handleChange("unit", option.value)}
+              placeholder="Select a unit"
+              isSearchable={true}
+              styles={{
+                container: (provided) => ({ ...provided, width: "100%" }),
+              }}
+            />
             {errors.unit && (
               <div className={classes.addFormError}>{errors.unit}</div>
+            )}
+          </div>
+
+          <div className={classes.formInput}>
+            <label htmlFor="expiryDate" className={classes.addIngredientLabel}>
+              Expiry Date
+            </label>
+            <DatePicker
+              selected={formData.expiryDate}
+              onChange={(date) => handleChange("expiryDate", date)}
+              dateFormat="dd/MM/yyyy"
+              minDate={new Date()}
+              placeholderText="Select expiry date (optional)"
+              className={classes.datePicker}
+              isClearable
+              showYearDropdown
+              scrollableMonthYearDropdown
+              wrapperClassName={classes.datePickerWrapper}
+            />
+            {errors.expiryDate && (
+              <div className={classes.addFormError}>{errors.expiryDate}</div>
             )}
           </div>
 
@@ -167,31 +315,20 @@ const AddIngredientModal = ({ isOpen, onClose, onConfirm }) => {
             <div
               onClick={handleSubmit}
               className={`${classes.addIngredientButton} ${
-                !formData.ingredientName.trim() ||
-                !formData.quantity.trim() ||
-                !formData.unit.trim()
-                  ? classes.addButtonDisabled
-                  : ""
-              }
-              } `}
-              disabled={
-                !formData.ingredientName.trim() ||
-                !formData.quantity.trim() ||
-                !formData.unit.trim()
-              }
+                !isFormValid ? classes.addButtonDisabled : ""
+              }`}
+              aria-disabled={!isFormValid}
             >
               Add
             </div>
-            <div>
-              {addStatus === "succeeded" && (
-                <div className={classes.addFormSuccess}>
-                  Ingredient added successfully!
-                </div>
-              )}
-              {addStatus === "failed" && addError && (
-                <div className={classes.addFormError}>Error: {addError}</div>
-              )}
-            </div>
+            {addStatus === "succeeded" && (
+              <div className={classes.addFormSuccess}>
+                Ingredient added successfully!
+              </div>
+            )}
+            {addStatus === "failed" && addError && (
+              <div className={classes.addFormError}>Error: {addError}</div>
+            )}
           </Modal.Footer>
         </form>
       </Modal.Body>
@@ -199,4 +336,4 @@ const AddIngredientModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-export default AddIngredientModal;
+export default React.memo(AddIngredientModal);

@@ -22,7 +22,8 @@ const CardsContainer = () => {
           </p>
         </div>
       ) : (
-        ingredients.map((item, index) => {
+        ingredients &&
+        ingredients["items"].map((item, index) => {
           return <IngredientCard key={index} ingredient={item} />;
         })
       )}

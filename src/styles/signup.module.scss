@@ -1,0 +1,33 @@
+.mainContainer {
+  display: flex;
+  min-height: 100vh;
+  min-width: 100vw;
+  flex-direction: column;
+}
+
+.card {
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+.authHeader {
+  color: #4caf50;
+}
+
+.signInButton {
+  transition: opacity 0.3s ease;
+  width: 100%;
+  padding: 10px 0;
+  background-color: #225c25;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+.signInButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.signInButton:hover {
+  background-color: #388e3c;
+}

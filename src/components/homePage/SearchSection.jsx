@@ -1,35 +1,41 @@
 import React, { useState } from "react";
 import classes from "../../styles/SearchSection.module.scss";
-import { useDispatch } from "react-redux";
-import { fetchSearchedRecipe } from "@/redux/recipeSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import FridgeRecipeIllustratiom from "./FridgeRecipeIllustratiom";
 
 const SearchSection = () => {
-  const [searchText, setSearchText] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSearch = (event) => {
-    event.preventDefault();
+  // const handleSearch = async (event) => {
+  //   event.preventDefault();
 
-    if (event.key === "Enter") {
-      const value = event.target.value;
-      if (value.trim() === "") {
-        setErrorMessage("Enter a recipe name");
+  //   if (event.key === "Enter") {
+  //     const value = event.target.value;
+  //     if (value.trim() === "") {
+  //       setErrorMessage("Enter a recipe name");
 
-        setTimeout(() => {
-          setErrorMessage("");
-        }, 3000);
-      } else {
-        setErrorMessage("");
+  //       setTimeout(() => {
+  //         setErrorMessage("");
+  //       }, 3000);
+  //     } else {
+  //       setErrorMessage("");
 
-        dispatch(fetchSearchedRecipe(value)).then(() => {
-          // navigate("/recipes");
-        });
-      }
-    }
-  };
+  //       try {
+  //         const response = await dispatch(fetchSearchedRecipe(value)).unwrap();
+
+  //         if (response.length > 0) {
+  //           navigate(`/searched`);
+  //         } else {
+  //           setErrorMessage("No recipes found!");
+  //         }
+  //       } catch (error) {
+  //         // console.error("Fetch failed:", error);
+  //         setErrorMessage("Failed to fetch recipe");
+  //       }
+  //     }
+  //   }
+  // };
 
   const handleFridgeInventoryClick = () => {
     let path = "/fridge";
@@ -37,17 +43,20 @@ const SearchSection = () => {
   };
 
   const handleRecipeIdeaClick = () => {
-    let path = "/recipes";
+    let path = "/recipeIdea";
     navigate(path);
   };
 
   return (
     <div className={classes.mainContainer}>
-      <div className={classes.title}>Welcome To FridgeRecipe!</div>
+      <div className={classes.illustrationWrapper}>
+        <FridgeRecipeIllustratiom />
+      </div>
+      <h2 className={classes.title}>Welcome To FridgeRecipe!</h2>
       <div className={classes.description}>
         Discover recipes you can cook with ingredients you already have.
       </div>
-      <div className={classes.searchWrapper}>
+      {/* <div className={classes.searchWrapper}>
         <input
           type="text"
           className={classes.searchInput}
@@ -61,7 +70,7 @@ const SearchSection = () => {
         {errorMessage && (
           <div className={classes.errorMessageDiv}>{errorMessage}</div>
         )}
-      </div>
+      </div> */}
       <div className={classes.buttonsWrapper}>
         <button
           className={classes.homeButtons}
