@@ -6,7 +6,7 @@ export const fetchTopRecipes = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/recipe/suggestion/${userId}`
+        `https://backend-fridgerecipe.onrender.com/recipe/suggestion/${userId}`
       );
       return response.data;
     } catch (error) {
@@ -21,7 +21,7 @@ export const fetchAllRecipes = createAsyncThunk(
   "fridge/fetchAllRecipes",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:8080/recipe/all`);
+      const response = await axios.get(`https://backend-fridgerecipe.onrender.com/recipe/all`);
       return response.data;
     } catch (error) {
       return rejectWithValue(

@@ -6,7 +6,7 @@ export const fetchIngredientsToSelect = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/ingredient/getList`
+        `https://backend-fridgerecipe.onrender.com/ingredient/getList`
       );
       return response.data;
     } catch (error) {
@@ -22,7 +22,7 @@ export const fetchIngredientsForDisplay = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/fridge/${userId}/inventory`
+        `https://backend-fridgerecipe.onrender.com/fridge/${userId}/inventory`
       );
       return response.data;
     } catch (error) {
@@ -38,7 +38,7 @@ export const addIngredient = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/fridge/${payload.userId}/add`,
+        `https://backend-fridgerecipe.onrender.com/fridge/${payload.userId}/add`,
         payload.ingredientToAdd,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -56,7 +56,7 @@ export const deleteIngredient = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/fridge/${payload.userId}/remove`,
+        `https://backend-fridgerecipe.onrender.com/fridge/${payload.userId}/remove`,
         payload.payload,
         { headers: { "Content-Type": "application/json" } }
       );

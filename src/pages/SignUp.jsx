@@ -102,17 +102,20 @@ function SignUp() {
     setSubmitError("");
 
     try {
-      const response = await fetch("http://localhost:8080/v1/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "https://backend-fridgerecipe.onrender.com/v1/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+          }),
+        }
+      );
 
       const data = await response.json();
 

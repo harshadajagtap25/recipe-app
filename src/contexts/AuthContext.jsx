@@ -18,11 +18,14 @@ export const AuthProvider = ({ children }) => {
 
   const fetchCurrentUser = async () => {
     try {
-      const response = await fetch("http://localhost:8080/v1/auth/me", {
-        headers: {
-          "x-auth-token": token,
-        },
-      });
+      const response = await fetch(
+        "https://backend-fridgerecipe.onrender.com/v1/auth/me",
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
 
       if (response.ok) {
         const userData = await response.json();
