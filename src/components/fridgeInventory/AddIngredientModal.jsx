@@ -190,7 +190,7 @@ const AddIngredientModal = ({ isOpen, onClose }) => {
   const isFormValid =
     formData.ingredientName.trim() &&
     formData.quantity.trim() &&
-    formData.unit  &&
+    formData.unit &&
     (!formData.expiryDate || !errors.expiryDate) &&
     Object.values(errors).every((error) => !error);
 
