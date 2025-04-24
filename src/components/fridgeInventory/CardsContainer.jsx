@@ -5,10 +5,13 @@ import { useSelector } from "react-redux";
 
 const CardsContainer = () => {
   const { ingredients } = useSelector((state) => state.fridge);
+  console.log("ingredient : ", ingredients);
 
   return (
     <div className={classes.cardsContainerWrapper}>
-      {ingredients && ingredients["items"].length <= 0 ? (
+      {ingredients &&
+      ingredients["items"] &&
+      ingredients["items"].length <= 0 ? (
         <div className={classes.noIngredientText}>
           <p>No ingredient in invetory</p>
           <p>
@@ -23,6 +26,7 @@ const CardsContainer = () => {
         </div>
       ) : (
         ingredients &&
+        ingredients["items"] &&
         ingredients["items"].map((item, index) => {
           return <IngredientCard key={index} ingredient={item} />;
         })
