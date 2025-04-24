@@ -80,38 +80,21 @@ function SignIn() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://backend-fridgerecipe.onrender.com/v1/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        }
-      );
+      const result = await login({
+        email,
+        password,
+      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage =
-          data.error ||
-          (data.errors && data.errors[0]?.msg) ||
-          "Invalid credentials";
-        setSubmitError(errorMessage);
+      if (!result.success) {
+        // const errorMessage =
+        //   data.error ||
+        //   (data.errors && data.errors[0]?.msg) ||
+        //   "Invalid credentials";
+        setSubmitError(result.error);
         setIsLoading(false);
-
         return;
       }
 
-      localStorage.setItem("token", data.token);
-
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      login(data.user, data.token);
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);

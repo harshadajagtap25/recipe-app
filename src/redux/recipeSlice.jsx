@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export const fetchTopRecipes = createAsyncThunk(
   "fridge/fetchTopRecipes",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://backend-fridgerecipe.onrender.com/recipe/suggestion/${userId}`
+        `${API_BASE_URL}/recipe/suggestion/${userId}`
       );
       return response.data;
     } catch (error) {
@@ -21,7 +23,7 @@ export const fetchAllRecipes = createAsyncThunk(
   "fridge/fetchAllRecipes",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://backend-fridgerecipe.onrender.com/recipe/all`);
+      const response = await axios.get(`${API_BASE_URL}/recipe/all`);
       return response.data;
     } catch (error) {
       return rejectWithValue(

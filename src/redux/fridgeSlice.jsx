@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export const fetchIngredientsToSelect = createAsyncThunk(
   "fridge/fetchIngredientsToSelect",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `https://backend-fridgerecipe.onrender.com/ingredient/getList`
-      );
+      const response = await axios.get(`${API_BASE_URL}/ingredient/getList`);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -22,7 +22,7 @@ export const fetchIngredientsForDisplay = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://backend-fridgerecipe.onrender.com/fridge/${userId}/inventory`
+        `${API_BASE_URL}/fridge/${userId}/inventory`
       );
       return response.data;
     } catch (error) {
@@ -38,7 +38,7 @@ export const addIngredient = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `https://backend-fridgerecipe.onrender.com/fridge/${payload.userId}/add`,
+        `${API_BASE_URL}/fridge/${payload.userId}/add`,
         payload.ingredientToAdd,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -56,7 +56,7 @@ export const deleteIngredient = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `https://backend-fridgerecipe.onrender.com/fridge/${payload.userId}/remove`,
+        `${API_BASE_URL}/fridge/${payload.userId}/remove`,
         payload.payload,
         { headers: { "Content-Type": "application/json" } }
       );

@@ -8,7 +8,7 @@ const CardsContainer = () => {
 
   return (
     <div className={classes.cardsContainerWrapper}>
-      {ingredients.length <= 0 ? (
+      {ingredients && ingredients["items"].length <= 0 ? (
         <div className={classes.noIngredientText}>
           <p>No ingredient in invetory</p>
           <p>

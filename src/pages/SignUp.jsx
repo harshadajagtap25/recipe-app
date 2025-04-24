@@ -24,7 +24,7 @@ function SignUp() {
   });
 
   const navigate = useNavigate();
-  const { login, currentUser, isAuthLoading } = useAuth();
+  const { register, currentUser, isAuthLoading } = useAuth();
 
   useEffect(() => {
     //  redirect them -  were trying to access, or home if none
@@ -94,6 +94,7 @@ function SignUp() {
     });
   };
 
+  // signed up user into app
   const handleSignUp = async (e) => {
     e.preventDefault();
 
@@ -107,45 +108,25 @@ function SignUp() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://backend-fridgerecipe.onrender.com/v1/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-          }),
-        }
-      );
+      const result = await register({
+        username,
+        email,
+        password,
+      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage =
-          data.error ||
-          (data.errors && data.errors[0]?.msg) ||
-          "Registration failed";
-        setSubmitError(errorMessage);
+      if (!result.success) {
+        setSubmitError(result.error);
         setIsLoading(false);
         return;
       }
 
-      localStorage.setItem("token", data.token);
-
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      login(data.user, data.token);
-
-      // Get the intended destination or go to home
+      // Registration successful, redirect user
       const from = location.state?.from?.pathname || "/";
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Registration error:", error);
       setSubmitError("Network error. Please try again later.");
+    } finally {
       setIsLoading(false);
     }
   };

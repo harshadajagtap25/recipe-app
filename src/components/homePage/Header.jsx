@@ -3,12 +3,15 @@ import { FaBars, FaClipboardList, FaHome, FaUtensils } from "react-icons/fa";
 import classes from "../../styles/home.module.scss";
 import { useNavigate } from "react-router-dom";
 import { GiMeal } from "react-icons/gi";
-import { MdOutlineRestaurantMenu } from "react-icons/md";
+import { MdLogout, MdOutlineRestaurantMenu } from "react-icons/md";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  const { logout } = useAuth();
 
   const handleHomeClick = () => {
     navigate("/");
@@ -23,6 +26,10 @@ const Header = () => {
 
   const handleAllRecipesClick = () => {
     navigate("/allRecipes");
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   useEffect(() => {
@@ -47,6 +54,9 @@ const Header = () => {
         <div onClick={handleFridgeInventoryClick}>Fridge Inventory</div>
         <div onClick={handleRecipeIdeaClick}>Recipe Ideas</div>
         <div onClick={handleAllRecipesClick}>All Recipes</div>
+        <div onClick={handleLogout}>
+          <MdLogout />
+        </div>
       </div>
 
       {/* Mobile Navigation */}
@@ -73,6 +83,9 @@ const Header = () => {
           </div>
           <div onClick={handleAllRecipesClick}>
             <MdOutlineRestaurantMenu /> All Recipes
+          </div>
+          <div onClick={handleLogout}>
+            <MdLogout /> Log Out
           </div>
         </div>
       </div>
