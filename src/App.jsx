@@ -9,6 +9,7 @@ import AuthRoutesWrapper from "./components/common/AuthWrapper";
 import ProtectedRoute from "./guards/ProtectedRouteGuard";
 import { lazy, Suspense } from "react";
 import Loader from "./components/common/Loader";
+import { Analytics } from "@vercel/analytics/react";
 
 const SignIn = lazy(() => import("./pages/SignIn"));
 const SignUp = lazy(() => import("./pages/SignUp"));
@@ -17,7 +18,6 @@ const Fridge = lazy(() => import("./pages/Fridge"));
 const Recipies = lazy(() => import("./pages/Recipies"));
 const RecipeIdeas = lazy(() => import("./pages/RecipeIdeas"));
 const AllRecipes = lazy(() => import("./pages/AllRecipes"));
-import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   return (
