@@ -6,6 +6,7 @@ import RecipeIdeasList from "@/components/RecipeIdeasPage/RecipeIdeasList";
 import { fetchTopRecipes } from "@/redux/recipeSlice";
 import { GiMeal } from "react-icons/gi";
 import { useAuth } from "@/contexts/AuthContext";
+import Loader from "@/components/common/Loader";
 
 const RecipeIdeas = () => {
   const { top3Status, top3Error, top3RecipeSuggestions } = useSelector(
@@ -49,7 +50,7 @@ const RecipeIdeas = () => {
           </div>
         )}
       </div>
-      {top3Status === "loading" && <p>Loading...</p>}
+      {top3Status === "loading" && <Loader />}
       {top3Status === "failed" && <p style={{ color: "red" }}>{top3Error}</p>}
       {top3Status === "succeeded" && <RecipeIdeasList />}
     </div>

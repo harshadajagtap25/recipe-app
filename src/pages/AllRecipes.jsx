@@ -5,6 +5,7 @@ import classes from "../styles/allRecipes.module.scss";
 import Header from "@/components/homePage/Header";
 
 import AllRecipesComponent from "@/components/allRecipesComponents/AllRecipesComponent";
+import Loader from "@/components/common/Loader";
 
 const AllRecipes = () => {
   const { allRecipesStatus, allRecipesError } = useSelector(
@@ -24,7 +25,7 @@ const AllRecipes = () => {
   return (
     <div className={classes.mainContainer}>
       <Header />
-      {allRecipesStatus === "loading" && <p>Loading...</p>}
+      {allRecipesStatus === "loading" && <Loader />}
       {allRecipesStatus === "failed" && (
         <p style={{ color: "red" }}>{allRecipesError}</p>
       )}

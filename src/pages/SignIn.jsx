@@ -19,13 +19,17 @@ function SignIn() {
   });
 
   const navigate = useNavigate();
-  const { login, currentUser } = useAuth();
+  const { login, currentUser, isAuthLoading } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (currentUser) {
-      navigate("/");
+    //  redirect them -  were trying to access, or home if none
+
+    if (!isAuthLoading && currentUser) {
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, isAuthLoading, navigate, location]);
 
   useEffect(() => {
     const isEmailValid = validateEmail(email);
@@ -73,6 +77,7 @@ function SignIn() {
     });
 
     setSubmitError("");
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -97,6 +102,8 @@ function SignIn() {
           (data.errors && data.errors[0]?.msg) ||
           "Invalid credentials";
         setSubmitError(errorMessage);
+        setIsLoading(false);
+
         return;
       }
 
@@ -104,11 +111,12 @@ function SignIn() {
 
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      login(data.user);
+      login(data.user, data.token);
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
       setSubmitError("Network error. Please try again later.");
+      setIsLoading(false);
     }
   };
 
@@ -187,9 +195,20 @@ function SignIn() {
                 <button
                   type="submit"
                   className={styles.signInButton}
-                  disabled={!isFormValid}
+                  disabled={!isFormValid || isLoading}
                 >
-                  Sign In
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Loading...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </button>
               </form>
 

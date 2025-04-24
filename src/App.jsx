@@ -3,23 +3,17 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Fridge from "./pages/Fridge";
 import Recipies from "./pages/Recipies";
 import RecipeIdeas from "./pages/RecipeIdeas";
 import AllRecipes from "./pages/AllRecipes";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-
-const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useAuth();
-  if (!currentUser) {
-    return <Navigate to="/signin" />;
-  }
-  return children;
-};
+import { ProtectedRouteGuard } from "./guards/ProtectedRouteGuard";
 
 function App() {
   return (
@@ -32,41 +26,41 @@ function App() {
           <Route
             path="/"
             element={
-              <ProtectedRoute>
+              <ProtectedRouteGuard>
                 <Home />
-              </ProtectedRoute>
+              </ProtectedRouteGuard>
             }
           />
           <Route
             path="/fridge"
             element={
-              <ProtectedRoute>
+              <ProtectedRouteGuard>
                 <Fridge />
-              </ProtectedRoute>
+              </ProtectedRouteGuard>
             }
           />
           <Route
             path="/recipes/:recipeName"
             element={
-              <ProtectedRoute>
+              <ProtectedRouteGuard>
                 <Recipies />
-              </ProtectedRoute>
+              </ProtectedRouteGuard>
             }
           />
           <Route
             path="/recipeIdea"
             element={
-              <ProtectedRoute>
+              <ProtectedRouteGuard>
                 <RecipeIdeas />
-              </ProtectedRoute>
+              </ProtectedRouteGuard>
             }
           />
           <Route
             path="/allRecipes"
             element={
-              <ProtectedRoute>
+              <ProtectedRouteGuard>
                 <AllRecipes />
-              </ProtectedRoute>
+              </ProtectedRouteGuard>
             }
           />
 

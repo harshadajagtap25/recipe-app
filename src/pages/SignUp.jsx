@@ -15,6 +15,7 @@ function SignUp() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [touchedFields, setTouchedFields] = useState({
     username: false,
@@ -23,13 +24,16 @@ function SignUp() {
   });
 
   const navigate = useNavigate();
-  const { login, currentUser } = useAuth();
+  const { login, currentUser, isAuthLoading } = useAuth();
 
   useEffect(() => {
-    if (currentUser) {
-      navigate("/");
+    //  redirect them -  were trying to access, or home if none
+
+    if (!isAuthLoading && currentUser) {
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, isAuthLoading, navigate, location]);
 
   useEffect(() => {
     const isUsernameValid = validateUsername(username);
@@ -100,6 +104,7 @@ function SignUp() {
     });
 
     setSubmitError("");
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -125,6 +130,7 @@ function SignUp() {
           (data.errors && data.errors[0]?.msg) ||
           "Registration failed";
         setSubmitError(errorMessage);
+        setIsLoading(false);
         return;
       }
 
@@ -132,11 +138,15 @@ function SignUp() {
 
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      login(data.user);
-      navigate("/");
+      login(data.user, data.token);
+
+      // Get the intended destination or go to home
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     } catch (error) {
       console.error("Registration error:", error);
       setSubmitError("Network error. Please try again later.");
+      setIsLoading(false);
     }
   };
 
@@ -236,9 +246,20 @@ function SignUp() {
                 <button
                   type="submit"
                   className={styles.signInButton}
-                  disabled={!isFormValid}
+                  disabled={!isFormValid || isLoading}
                 >
-                  Sign Up
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Loading...
+                    </>
+                  ) : (
+                    "Sign Up"
+                  )}
                 </button>
               </form>
 
