@@ -17,67 +17,71 @@ const Fridge = lazy(() => import("./pages/Fridge"));
 const Recipies = lazy(() => import("./pages/Recipies"));
 const RecipeIdeas = lazy(() => import("./pages/RecipeIdeas"));
 const AllRecipes = lazy(() => import("./pages/AllRecipes"));
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AuthRoutesWrapper>
-          <Suspense fallback={<Loader />}>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
+    <>
+      <AuthProvider>
+        <Router>
+          <AuthRoutesWrapper>
+            <Suspense fallback={<Loader />}>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
 
-              {/* Protected routes */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/fridge"
-                element={
-                  <ProtectedRoute>
-                    <Fridge />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/recipes/:recipeName"
-                element={
-                  <ProtectedRoute>
-                    <Recipies />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/recipeIdea"
-                element={
-                  <ProtectedRoute>
-                    <RecipeIdeas />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/allRecipes"
-                element={
-                  <ProtectedRoute>
-                    <AllRecipes />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected routes */}
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/fridge"
+                  element={
+                    <ProtectedRoute>
+                      <Fridge />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/recipes/:recipeName"
+                  element={
+                    <ProtectedRoute>
+                      <Recipies />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/recipeIdea"
+                  element={
+                    <ProtectedRoute>
+                      <RecipeIdeas />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/allRecipes"
+                  element={
+                    <ProtectedRoute>
+                      <AllRecipes />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Fallback route */}
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </Suspense>
-        </AuthRoutesWrapper>
-      </Router>
-    </AuthProvider>
+                {/* Fallback route */}
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </Suspense>
+          </AuthRoutesWrapper>
+        </Router>
+      </AuthProvider>
+      <Analytics />
+    </>
   );
 }
 
