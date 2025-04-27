@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 
 const CardsContainer = () => {
   const { ingredients } = useSelector((state) => state.fridge);
-  console.log("ingredient : ", ingredients);
 
   return (
     <div className={classes.cardsContainerWrapper}>
